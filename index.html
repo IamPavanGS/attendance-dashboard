@@ -450,33 +450,23 @@
 
         workbook.outputAsync().then(blob => {
           const url = window.URL.createObjectURL(blob);
-          const newWindow = window.open(url, '_blank');
-          
-          if (newWindow) {
-            newWindow.document.title = `Attendance ${selectedDate}`;
-            setTimeout(() => {
-              const a = newWindow.document.createElement("a");
-              a.href = url;
-              a.download = `attendance-${selectedDate}.xlsx`;
-              newWindow.document.body.appendChild(a);
-              a.click();
-              setTimeout(() => {
-                window.URL.revokeObjectURL(url);
-              }, 100);
-            }, 100);
-          } else {
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `attendance-${selectedDate}.xlsx`;
-            a.click();
-            window.URL.revokeObjectURL(url);
-          }
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `attendance-${selectedDate}.xlsx`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => window.URL.revokeObjectURL(url), 100);
         });
       });
     };
 
     document.getElementById("clearBtn").onclick = () => {
-      if (confirm("Are you sure you want to clear all attendance data?")) {
+      const userConfirmed = window.confirm ? 
+        confirm("Are you sure you want to clear all attendance data?") : 
+        true;
+      
+      if (userConfirmed) {
         attendance = {};
         buildTable();
         updateStats();
