@@ -104,7 +104,8 @@
     .status-btn.active.absent { background: #dc3545; color: white; border-color: #dc3545; }
     .actions {
       display: flex;
-      gap: 15px;
+      flex-direction: column;
+      gap: 10px;
       padding: 12px 20px;
       justify-content: center;
       background: #f8f9fa;
@@ -126,17 +127,21 @@
     }
     .action-btn.save { background: #28a745; color: white; }
     .action-btn.clear { background: #6c757d; color: white; }
-    @media (max-width: 768px) {
-      .stats { flex-direction: column; gap: 10px; }
-      .btn-group { flex-direction: column; }
-      .actions { flex-direction: column; }
+    .download-link {
+      text-align: center;
+      margin-top: 8px;
     }
-    @media print {
-      body { background: white; }
-      .date-selector, .actions, .btn { display: none !important; }
-      .container { box-shadow: none; }
-      .stats { border: 1px solid #dee2e6; }
+    .download-link a {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
     }
+    .download-link a:hover { background: #0056b3; }
   </style>
 </head>
 <body>
@@ -178,6 +183,8 @@
     <div class="actions">
       <button class="action-btn save" id="saveBtn">📥 Save to Excel</button>
       <button class="action-btn clear" id="clearBtn">🔄 Clear All</button>
+      <!-- Download link will appear here -->
+      <div class="download-link" id="downloadArea"></div>
     </div>
   </div>
 
@@ -199,6 +206,7 @@
     const presentCount = document.getElementById("presentCount");
     const absentCount = document.getElementById("absentCount");
     const pendingCount = document.getElementById("pendingCount");
+    const downloadArea = document.getElementById("downloadArea");
 
     datePicker.value = selectedDate;
     datePicker.addEventListener("change", () => { selectedDate = datePicker.value; });
@@ -268,7 +276,7 @@
       });
     }
 
-    // 🔹 Modified Save Function: Opens Excel in new tab instead of auto-download
+    // Modified Save Function: shows a clickable download link
     document.getElementById("saveBtn").onclick = () => {
       XlsxPopulate.fromBlankAsync().then(workbook => {
         const sheet = workbook.sheet(0);
@@ -300,7 +308,17 @@
 
         workbook.outputAsync().then(blob => {
           const url = window.URL.createObjectURL(blob);
-          window.open(url, "_blank"); // 🔹 Opens in new tab
+
+          // clear old link if present
+          downloadArea.innerHTML = "";
+
+          // create new link
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `attendance-${selectedDate}.xlsx`;
+          link.textContent = "⬇ Click here to download Excel";
+
+          downloadArea.appendChild(link);
         });
       });
     };
@@ -311,6 +329,7 @@
         attendance = {};
         buildTable();
         updateStats();
+        downloadArea.innerHTML = ""; // clear old download link
       }
     };
 
