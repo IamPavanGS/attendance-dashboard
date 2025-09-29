@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx-populate/1.21.0/xlsx-populate.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .date-selector {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 12px 20px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 15px;
+    }
+
+    .date-selector input {
+      background: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      padding: 20px;
+      background: #f8f9fa;
+      border-bottom: 2px solid #e9ecef;
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: 15px;
+    }
+
+    .stat-number {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #6c757d;
+      font-size: 14px;
+    }
+
+    .stat-card.present .stat-number { color: #28a745; }
+    .stat-card.absent .stat-number { color: #dc3545; }
+    .stat-card.pending .stat-number { color: #ffc107; }
+
+    .table-container {
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    th {
+      background: #495057;
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    .tower-name {
+      font-weight: 500;
+      color: #212529;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 20px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      flex: 1;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn.present {
+      background: #28a745;
+      color: white;
+      border-color: #28a745;
+    }
+
+    .btn.absent {
+      background: #dc3545;
+      color: white;
+      border-color: #dc3545;
+    }
+
+    .btn:not(.present):not(.absent) {
+      background: white;
+      color: #6c757d;
+      border-color: #dee2e6;
+    }
+
+    .btn:not(.present):not(.absent):hover {
+      border-color: #adb5bd;
+      color: #495057;
+    }
+
+    .actions {
+      display: flex;
+      gap: 15px;
+      padding: 20px;
+      justify-content: center;
+      background: #f8f9fa;
+      border-top: 2px solid #e9ecef;
+    }
+
+    .action-btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .action-btn.save {
+      background: #28a745;
+      color: white;
+    }
+
+    .action-btn.clear {
+      background: #6c757d;
+      color: white;
+    }
+
+
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 22px;
+      }
+
+      .stats {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      table {
+        font-size: 14px;
+      }
+
+      th, td {
+        padding: 10px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .date-selector, .actions, .btn {
+        display: none !important;
+      }
+
+      .container {
+        box-shadow: none;
+      }
+
+      .stats {
+        border: 1px solid #dee2e6;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Technology Towers Attendance Dashboard</h1>
+      <div class="date-selector">
+        <input type="date" id="datePicker">
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card present">
+        <div class="stat-number" id="presentCount">0</div>
+        <div class="stat-label">Present</div>
+      </div>
+      <div class="stat-card absent">
+        <div class="stat-number" id="absentCount">0</div>
+        <div class="stat-label">Absent</div>
+      </div>
+      <div class="stat-card pending">
+        <div class="stat-number" id="pendingCount">17</div>
+        <div class="stat-label">Pending</div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table id="attendanceTable">
+        <thead>
+          <tr>
+            <th>Technology Towers</th>
+            <th>Attendance Status</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <button class="action-btn save" id="saveBtn">📥 Save to Excel</button>
+      <button class="action-btn clear" id="clearBtn">🔄 Clear All</button>
+    </div>
+  </div>
+
+  <script>
+    const towers = [
+      "DL IN FR-NETWORK",
+      "DL FR IN ALE Batchmgmt",
+      "DL FR IN ALE ISO SAP",
+      "DL FR IN SAP FAST",
+      "DL IN OSF DBA SQL",
+      "DL IN OSF DBA ORACLE",
+      "DL CN ALE MS Support",
+      "DL IN ALE IAM Support",
+      "DL IN ALE CSU EPS",
+      "VTOM ADMIN",
+      "Apps - CG ALE DWH",
+      "DL IN IM BOXI ADMIN",
+      "IS - CG ALE PKI",
+      "Cloud COS RUN AWS FRNC",
+      "COS Network",
+      "SFO - RDS",
+      "Cloud Security"
+    ];
+
+    let attendance = {};
+    let selectedDate = new Date().toISOString().split("T")[0];
+
+    const datePicker = document.getElementById("datePicker");
+    const tableBody = document.getElementById("tableBody");
+    const presentCount = document.getElementById("presentCount");
+    const absentCount = document.getElementById("absentCount");
+    const pendingCount = document.getElementById("pendingCount");
+
+    datePicker.value = selectedDate;
+
+    datePicker.addEventListener("change", () => {
+      selectedDate = datePicker.value;
+    });
+
+    function updateStats() {
+      const present = Object.values(attendance).filter(s => s === "Present").length;
+      const absent = Object.values(attendance).filter(s => s === "Absent").length;
+      const pending = towers.length - present - absent;
+
+      presentCount.textContent = present;
+      absentCount.textContent = absent;
+      pendingCount.textContent = pending;
+    }
+
+    function buildTable() {
+      tableBody.innerHTML = "";
+      
+      towers.forEach(name => {
+        const row = tableBody.insertRow();
+        
+        const nameCell = row.insertCell();
+        nameCell.className = "tower-name";
+        nameCell.textContent = name;
+
+        const btnCell = row.insertCell();
+        const btnGroup = document.createElement("div");
+        btnGroup.className = "btn-group";
+
+        const presentBtn = document.createElement("button");
+        presentBtn.textContent = "Present";
+        presentBtn.className = "btn";
+        
+        const absentBtn = document.createElement("button");
+        absentBtn.textContent = "Absent";
+        absentBtn.className = "btn";
+
+        presentBtn.onclick = () => {
+          if (attendance[name] === "Present") {
+            delete attendance[name];
+            presentBtn.className = "btn";
+          } else {
+            attendance[name] = "Present";
+            presentBtn.className = "btn present";
+            absentBtn.className = "btn";
+          }
+          updateStats();
+        };
+
+        absentBtn.onclick = () => {
+          if (attendance[name] === "Absent") {
+            delete attendance[name];
+            absentBtn.className = "btn";
+          } else {
+            attendance[name] = "Absent";
+            absentBtn.className = "btn absent";
+            presentBtn.className = "btn";
+          }
+          updateStats();
+        };
+
+        if (attendance[name] === "Present") {
+          presentBtn.className = "btn present";
+        } else if (attendance[name] === "Absent") {
+          absentBtn.className = "btn absent";
+        }
+
+        btnGroup.appendChild(presentBtn);
+        btnGroup.appendChild(absentBtn);
+        btnCell.appendChild(btnGroup);
+      });
+    }
+
+    document.getElementById("saveBtn").onclick = () => {
+      XlsxPopulate.fromBlankAsync().then(workbook => {
+        const sheet = workbook.sheet(0);
+        
+        sheet.cell("A1").value("Technology Towers").style({
+          bold: true,
+          fill: "4472C4",
+          fontColor: "FFFFFF",
+          fontSize: 12
+        });
+        
+        const dateObj = new Date(selectedDate);
+        const formattedDate = dateObj.toLocaleDateString('en-GB', { 
+          day: '2-digit', 
+          month: 'short' 
+        });
+        
+        sheet.cell("B1").value(formattedDate).style({
+          bold: true,
+          fill: "4472C4",
+          fontColor: "FFFFFF",
+          fontSize: 12
+        });
+
+        towers.forEach((name, i) => {
+          sheet.cell("A" + (i + 2)).value(name);
+          let cell = sheet.cell("B" + (i + 2));
+
+          if (attendance[name] === "Present") {
+            cell.value("Present").style({
+              fill: "00FF00",
+              fontColor: "000000",
+              bold: true
+            });
+          } else if (attendance[name] === "Absent") {
+            cell.value("Absent").style({
+              fill: "FF0000",
+              fontColor: "FFFFFF",
+              bold: true
+            });
+          } else {
+            cell.value("").style("fill", "FFFF00");
+          }
+        });
+
+        sheet.column("A").width(30);
+        sheet.column("B").width(15);
+
+        workbook.outputAsync().then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `attendance-${selectedDate}.xlsx`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        });
+      });
+    };
+
+    document.getElementById("clearBtn").onclick = () => {
+      if (confirm("Are you sure you want to clear all attendance data?")) {
+        attendance = {};
+        buildTable();
+        updateStats();
+      }
+    };
+
+    buildTable();
+    updateStats();
+  </script>
+</body>
+</html>
