@@ -6,7 +6,12 @@
   <title>Attendance Dashboard</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx-populate/1.21.0/xlsx-populate.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -16,6 +21,7 @@
       align-items: center;
       justify-content: center;
     }
+
     .container {
       max-width: 1200px;
       width: 100%;
@@ -28,6 +34,7 @@
       display: flex;
       flex-direction: column;
     }
+
     .header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
@@ -35,7 +42,12 @@
       text-align: center;
       flex-shrink: 0;
     }
-    .header h1 { font-size: 22px; margin-bottom: 8px; }
+
+    .header h1 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
     .date-selector {
       background: rgba(255, 255, 255, 0.2);
       padding: 8px 15px;
@@ -43,6 +55,7 @@
       display: inline-block;
       margin-top: 8px;
     }
+
     .date-selector input {
       background: white;
       border: none;
@@ -51,6 +64,7 @@
       font-size: 14px;
       cursor: pointer;
     }
+
     .stats {
       display: flex;
       justify-content: space-around;
@@ -59,14 +73,40 @@
       border-bottom: 2px solid #e9ecef;
       flex-shrink: 0;
     }
-    .stat-card { text-align: center; padding: 8px; }
-    .stat-number { font-size: 24px; font-weight: bold; margin-bottom: 3px; }
-    .stat-label { color: #6c757d; font-size: 12px; }
+
+    .stat-card {
+      text-align: center;
+      padding: 8px;
+    }
+
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+
+    .stat-label {
+      color: #6c757d;
+      font-size: 12px;
+    }
+
     .stat-card.present .stat-number { color: #28a745; }
     .stat-card.absent .stat-number { color: #dc3545; }
     .stat-card.pending .stat-number { color: #ffc107; }
-    .table-container { padding: 15px 20px; overflow-y: auto; flex: 1; min-height: 0; }
-    table { width: 100%; border-collapse: separate; border-spacing: 0; }
+
+    .table-container {
+      padding: 15px 20px;
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
     th {
       background: #495057;
       color: white;
@@ -78,9 +118,22 @@
       z-index: 10;
       font-size: 14px;
     }
-    td { padding: 10px; border-bottom: 1px solid #e9ecef; font-size: 13px; }
-    tr:hover { background: #f8f9fa; }
-    .tower-name { font-weight: 500; color: #212529; }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #e9ecef;
+      font-size: 13px;
+    }
+
+    tr:hover {
+      background: #f8f9fa;
+    }
+
+    .tower-name {
+      font-weight: 500;
+      color: #212529;
+    }
+
     .status-btn {
       padding: 6px 16px;
       border: 2px solid transparent;
@@ -94,24 +147,39 @@
       color: #6c757d;
       border-color: #dee2e6;
     }
-    .btn-group { display: flex; gap: 8px; }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
     .status-btn:hover {
       transform: translateY(-1px);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       border-color: #adb5bd;
     }
-    .status-btn.active.present { background: #28a745; color: white; border-color: #28a745; }
-    .status-btn.active.absent { background: #dc3545; color: white; border-color: #dc3545; }
+
+    .status-btn.active.present {
+      background: #28a745;
+      color: white;
+      border-color: #28a745;
+    }
+
+    .status-btn.active.absent {
+      background: #dc3545;
+      color: white;
+      border-color: #dc3545;
+    }
+
     .actions {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 12px 20px;
       justify-content: center;
+      padding: 12px 20px;
       background: #f8f9fa;
       border-top: 2px solid #e9ecef;
       flex-shrink: 0;
     }
+
     .action-btn {
       padding: 10px 25px;
       border: none;
@@ -121,27 +189,49 @@
       cursor: pointer;
       transition: all 0.3s ease;
     }
+
     .action-btn:hover {
       transform: translateY(-1px);
       box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
     }
-    .action-btn.save { background: #28a745; color: white; }
-    .action-btn.clear { background: #6c757d; color: white; }
-    .download-link {
-      text-align: center;
-      margin-top: 8px;
-    }
-    .download-link a {
-      display: inline-block;
-      margin-top: 6px;
-      padding: 8px 16px;
-      background: #007bff;
+
+    .action-btn.save {
+      background: #28a745;
       color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: 600;
     }
-    .download-link a:hover { background: #0056b3; }
+
+    @media (max-width: 768px) {
+      .stats {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .date-selector, .actions, .btn {
+        display: none !important;
+      }
+
+      .container {
+        box-shadow: none;
+      }
+
+      .stats {
+        border: 1px solid #dee2e6;
+      }
+    }
   </style>
 </head>
 <body>
@@ -182,20 +272,28 @@
 
     <div class="actions">
       <button class="action-btn save" id="saveBtn">📥 Save to Excel</button>
-      <button class="action-btn clear" id="clearBtn">🔄 Clear All</button>
-      <!-- Download link will appear here -->
-      <div class="download-link" id="downloadArea"></div>
     </div>
   </div>
 
   <script>
     const towers = [
-      "DL IN FR-NETWORK", "DL FR IN ALE Batchmgmt", "DL FR IN ALE ISO SAP",
-      "DL FR IN SAP FAST", "DL IN OSF DBA SQL", "DL IN OSF DBA ORACLE",
-      "DL CN ALE MS Support", "DL IN ALE IAM Support", "DL IN ALE CSU EPS",
-      "VTOM ADMIN", "Apps - CG ALE DWH", "DL IN IM BOXI ADMIN",
-      "IS - CG ALE PKI", "Cloud COS RUN AWS FRNC", "COS Network",
-      "SFO - RDS", "Cloud Security"
+      "DL IN FR-NETWORK",
+      "DL FR IN ALE Batchmgmt",
+      "DL FR IN ALE ISO SAP",
+      "DL FR IN SAP FAST",
+      "DL IN OSF DBA SQL",
+      "DL IN OSF DBA ORACLE",
+      "DL CN ALE MS Support",
+      "DL IN ALE IAM Support",
+      "DL IN ALE CSU EPS",
+      "VTOM ADMIN",
+      "Apps - CG ALE DWH",
+      "DL IN IM BOXI ADMIN",
+      "IS - CG ALE PKI",
+      "Cloud COS RUN AWS FRNC",
+      "COS Network",
+      "SFO - RDS",
+      "Cloud Security"
     ];
 
     let attendance = {};
@@ -206,15 +304,18 @@
     const presentCount = document.getElementById("presentCount");
     const absentCount = document.getElementById("absentCount");
     const pendingCount = document.getElementById("pendingCount");
-    const downloadArea = document.getElementById("downloadArea");
 
     datePicker.value = selectedDate;
-    datePicker.addEventListener("change", () => { selectedDate = datePicker.value; });
+
+    datePicker.addEventListener("change", () => {
+      selectedDate = datePicker.value;
+    });
 
     function updateStats() {
       const present = Object.values(attendance).filter(s => s === "Present").length;
       const absent = Object.values(attendance).filter(s => s === "Absent").length;
       const pending = towers.length - present - absent;
+
       presentCount.textContent = present;
       absentCount.textContent = absent;
       pendingCount.textContent = pending;
@@ -222,8 +323,10 @@
 
     function buildTable() {
       tableBody.innerHTML = "";
+      
       towers.forEach(name => {
         const row = tableBody.insertRow();
+        
         const nameCell = row.insertCell();
         nameCell.className = "tower-name";
         nameCell.textContent = name;
@@ -235,7 +338,7 @@
         const presentBtn = document.createElement("button");
         presentBtn.textContent = "Present";
         presentBtn.className = "status-btn";
-
+        
         const absentBtn = document.createElement("button");
         absentBtn.textContent = "Absent";
         absentBtn.className = "status-btn";
@@ -276,17 +379,19 @@
       });
     }
 
-    // Modified Save Function: shows a clickable download link
     document.getElementById("saveBtn").onclick = () => {
       XlsxPopulate.fromBlankAsync().then(workbook => {
         const sheet = workbook.sheet(0);
-
+        
         sheet.cell("A1").value("Technology Towers").style({
           bold: true, fill: "4472C4", fontColor: "FFFFFF", fontSize: 12
         });
-
+        
         const dateObj = new Date(selectedDate);
-        const formattedDate = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        const formattedDate = dateObj.toLocaleDateString('en-GB', { 
+          day: '2-digit', month: 'short' 
+        });
+        
         sheet.cell("B1").value(formattedDate).style({
           bold: true, fill: "4472C4", fontColor: "FFFFFF", fontSize: 12
         });
@@ -294,6 +399,7 @@
         towers.forEach((name, i) => {
           sheet.cell("A" + (i + 2)).value(name);
           let cell = sheet.cell("B" + (i + 2));
+
           if (attendance[name] === "Present") {
             cell.value("Present").style({ fill: "00FF00", fontColor: "000000", bold: true });
           } else if (attendance[name] === "Absent") {
@@ -309,28 +415,17 @@
         workbook.outputAsync().then(blob => {
           const url = window.URL.createObjectURL(blob);
 
-          // clear old link if present
-          downloadArea.innerHTML = "";
+          // Force download with hidden link
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `attendance-${selectedDate}.xlsx`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
 
-          // create new link
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = `attendance-${selectedDate}.xlsx`;
-          link.textContent = "⬇ Click here to download Excel";
-
-          downloadArea.appendChild(link);
+          window.URL.revokeObjectURL(url);
         });
       });
-    };
-
-    document.getElementById("clearBtn").onclick = () => {
-      const userConfirmed = confirm("Are you sure you want to clear all attendance data?");
-      if (userConfirmed) {
-        attendance = {};
-        buildTable();
-        updateStats();
-        downloadArea.innerHTML = ""; // clear old download link
-      }
     };
 
     buildTable();
