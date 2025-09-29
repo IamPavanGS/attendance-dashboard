@@ -16,69 +16,78 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
-      padding: 20px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1200px;
+      width: 100%;
+      max-height: 95vh;
       margin: 0 auto;
       background: white;
       border-radius: 16px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 30px;
+      padding: 15px 20px;
       text-align: center;
+      flex-shrink: 0;
     }
 
     .header h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
+      font-size: 22px;
+      margin-bottom: 8px;
     }
 
     .date-selector {
       background: rgba(255, 255, 255, 0.2);
-      padding: 12px 20px;
+      padding: 8px 15px;
       border-radius: 8px;
       display: inline-block;
-      margin-top: 15px;
+      margin-top: 8px;
     }
 
     .date-selector input {
       background: white;
       border: none;
-      padding: 8px 16px;
+      padding: 6px 12px;
       border-radius: 6px;
-      font-size: 16px;
+      font-size: 14px;
       cursor: pointer;
     }
 
     .stats {
       display: flex;
       justify-content: space-around;
-      padding: 20px;
+      padding: 12px 20px;
       background: #f8f9fa;
       border-bottom: 2px solid #e9ecef;
+      flex-shrink: 0;
     }
 
     .stat-card {
       text-align: center;
-      padding: 15px;
+      padding: 8px;
     }
 
     .stat-number {
-      font-size: 32px;
+      font-size: 24px;
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 3px;
     }
 
     .stat-label {
       color: #6c757d;
-      font-size: 14px;
+      font-size: 12px;
     }
 
     .stat-card.present .stat-number { color: #28a745; }
@@ -86,8 +95,10 @@
     .stat-card.pending .stat-number { color: #ffc107; }
 
     .table-container {
-      padding: 20px;
-      overflow-x: auto;
+      padding: 15px 20px;
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
     }
 
     table {
@@ -99,17 +110,19 @@
     th {
       background: #495057;
       color: white;
-      padding: 15px;
+      padding: 10px;
       text-align: left;
       font-weight: 600;
       position: sticky;
       top: 0;
       z-index: 10;
+      font-size: 14px;
     }
 
     td {
-      padding: 15px;
+      padding: 10px;
       border-bottom: 1px solid #e9ecef;
+      font-size: 13px;
     }
 
     tr:hover {
@@ -121,72 +134,66 @@
       color: #212529;
     }
 
-    .btn-group {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn {
-      padding: 8px 20px;
+    .status-btn {
+      padding: 6px 16px;
       border: 2px solid transparent;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       transition: all 0.3s ease;
       flex: 1;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .btn.present {
-      background: #28a745;
-      color: white;
-      border-color: #28a745;
-    }
-
-    .btn.absent {
-      background: #dc3545;
-      color: white;
-      border-color: #dc3545;
-    }
-
-    .btn:not(.present):not(.absent) {
       background: white;
       color: #6c757d;
       border-color: #dee2e6;
     }
 
-    .btn:not(.present):not(.absent):hover {
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .status-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       border-color: #adb5bd;
-      color: #495057;
+    }
+
+    .status-btn.active.present {
+      background: #28a745;
+      color: white;
+      border-color: #28a745;
+    }
+
+    .status-btn.active.absent {
+      background: #dc3545;
+      color: white;
+      border-color: #dc3545;
     }
 
     .actions {
       display: flex;
       gap: 15px;
-      padding: 20px;
+      padding: 12px 20px;
       justify-content: center;
       background: #f8f9fa;
       border-top: 2px solid #e9ecef;
+      flex-shrink: 0;
     }
 
     .action-btn {
-      padding: 12px 30px;
+      padding: 10px 25px;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
     }
 
     .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
     }
 
     .action-btn.save {
@@ -351,20 +358,20 @@
 
         const presentBtn = document.createElement("button");
         presentBtn.textContent = "Present";
-        presentBtn.className = "btn";
+        presentBtn.className = "status-btn";
         
         const absentBtn = document.createElement("button");
         absentBtn.textContent = "Absent";
-        absentBtn.className = "btn";
+        absentBtn.className = "status-btn";
 
         presentBtn.onclick = () => {
           if (attendance[name] === "Present") {
             delete attendance[name];
-            presentBtn.className = "btn";
+            presentBtn.className = "status-btn";
           } else {
             attendance[name] = "Present";
-            presentBtn.className = "btn present";
-            absentBtn.className = "btn";
+            presentBtn.className = "status-btn active present";
+            absentBtn.className = "status-btn";
           }
           updateStats();
         };
@@ -372,19 +379,19 @@
         absentBtn.onclick = () => {
           if (attendance[name] === "Absent") {
             delete attendance[name];
-            absentBtn.className = "btn";
+            absentBtn.className = "status-btn";
           } else {
             attendance[name] = "Absent";
-            absentBtn.className = "btn absent";
-            presentBtn.className = "btn";
+            absentBtn.className = "status-btn active absent";
+            presentBtn.className = "status-btn";
           }
           updateStats();
         };
 
         if (attendance[name] === "Present") {
-          presentBtn.className = "btn present";
+          presentBtn.className = "status-btn active present";
         } else if (attendance[name] === "Absent") {
-          absentBtn.className = "btn absent";
+          absentBtn.className = "status-btn active absent";
         }
 
         btnGroup.appendChild(presentBtn);
@@ -443,11 +450,27 @@
 
         workbook.outputAsync().then(blob => {
           const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `attendance-${selectedDate}.xlsx`;
-          a.click();
-          window.URL.revokeObjectURL(url);
+          const newWindow = window.open(url, '_blank');
+          
+          if (newWindow) {
+            newWindow.document.title = `Attendance ${selectedDate}`;
+            setTimeout(() => {
+              const a = newWindow.document.createElement("a");
+              a.href = url;
+              a.download = `attendance-${selectedDate}.xlsx`;
+              newWindow.document.body.appendChild(a);
+              a.click();
+              setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+              }, 100);
+            }, 100);
+          } else {
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `attendance-${selectedDate}.xlsx`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+          }
         });
       });
     };
