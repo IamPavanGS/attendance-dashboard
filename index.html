@@ -31,26 +31,11 @@
     .header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 15px 20px;
+      padding: 20px;
       text-align: center;
       flex-shrink: 0;
     }
-    .header h1 { font-size: 22px; margin-bottom: 8px; }
-    .date-selector {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 8px 15px;
-      border-radius: 8px;
-      display: inline-block;
-      margin-top: 8px;
-    }
-    .date-selector input {
-      background: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 14px;
-      cursor: pointer;
-    }
+    .header h1 { font-size: 22px; }
     .stats {
       display: flex;
       justify-content: space-around;
@@ -126,7 +111,6 @@
       box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
     }
     .action-btn.save { background: #28a745; color: white; }
-    .action-btn.clear { background: #6c757d; color: white; }
     .download-link {
       text-align: center;
       margin-top: 8px;
@@ -148,9 +132,6 @@
   <div class="container">
     <div class="header">
       <h1>Technology Towers Attendance Dashboard</h1>
-      <div class="date-selector">
-        <input type="date" id="datePicker">
-      </div>
     </div>
 
     <div class="stats">
@@ -182,8 +163,6 @@
 
     <div class="actions">
       <button class="action-btn save" id="saveBtn">📥 Save to Excel</button>
-      <button class="action-btn clear" id="clearBtn">🔄 Clear All</button>
-      <!-- Download link will appear here -->
       <div class="download-link" id="downloadArea"></div>
     </div>
   </div>
@@ -199,17 +178,12 @@
     ];
 
     let attendance = {};
-    let selectedDate = new Date().toISOString().split("T")[0];
 
-    const datePicker = document.getElementById("datePicker");
     const tableBody = document.getElementById("tableBody");
     const presentCount = document.getElementById("presentCount");
     const absentCount = document.getElementById("absentCount");
     const pendingCount = document.getElementById("pendingCount");
     const downloadArea = document.getElementById("downloadArea");
-
-    datePicker.value = selectedDate;
-    datePicker.addEventListener("change", () => { selectedDate = datePicker.value; });
 
     function updateStats() {
       const present = Object.values(attendance).filter(s => s === "Present").length;
@@ -276,7 +250,6 @@
       });
     }
 
-    // Modified Save Function: shows a clickable download link
     document.getElementById("saveBtn").onclick = () => {
       XlsxPopulate.fromBlankAsync().then(workbook => {
         const sheet = workbook.sheet(0);
@@ -285,8 +258,8 @@
           bold: true, fill: "4472C4", fontColor: "FFFFFF", fontSize: 12
         });
 
-        const dateObj = new Date(selectedDate);
-        const formattedDate = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
         sheet.cell("B1").value(formattedDate).style({
           bold: true, fill: "4472C4", fontColor: "FFFFFF", fontSize: 12
         });
@@ -309,13 +282,12 @@
         workbook.outputAsync().then(blob => {
           const url = window.URL.createObjectURL(blob);
 
-          // clear old link if present
           downloadArea.innerHTML = "";
 
-          // create new link
           const link = document.createElement("a");
           link.href = url;
-          link.download = `attendance-${selectedDate}.xlsx`;
+          const dateString = now.toISOString().split("T")[0];
+          link.download = `attendance-${dateString}.xlsx`;
           link.textContent = "⬇ Click here to download Excel";
 
           downloadArea.appendChild(link);
@@ -323,19 +295,8 @@
       });
     };
 
-    document.getElementById("clearBtn").onclick = () => {
-      const userConfirmed = confirm("Are you sure you want to clear all attendance data?");
-      if (userConfirmed) {
-        attendance = {};
-        buildTable();
-        updateStats();
-        downloadArea.innerHTML = ""; // clear old download link
-      }
-    };
-
     buildTable();
     updateStats();
   </script>
 </body>
 </html>
-
