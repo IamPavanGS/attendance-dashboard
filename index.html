@@ -36,20 +36,6 @@
       flex-shrink: 0;
     }
     .header h1 { font-size: 22px; }
-    .stats {
-      display: flex;
-      justify-content: space-around;
-      padding: 12px 20px;
-      background: #f8f9fa;
-      border-bottom: 2px solid #e9ecef;
-      flex-shrink: 0;
-    }
-    .stat-card { text-align: center; padding: 8px; }
-    .stat-number { font-size: 24px; font-weight: bold; margin-bottom: 3px; }
-    .stat-label { color: #6c757d; font-size: 12px; }
-    .stat-card.present .stat-number { color: #28a745; }
-    .stat-card.absent .stat-number { color: #dc3545; }
-    .stat-card.pending .stat-number { color: #ffc107; }
     .table-container { padding: 15px 20px; overflow-y: auto; flex: 1; min-height: 0; }
     table { width: 100%; border-collapse: separate; border-spacing: 0; }
     th {
@@ -134,21 +120,6 @@
       <h1>Technology Towers Attendance Dashboard</h1>
     </div>
 
-    <div class="stats">
-      <div class="stat-card present">
-        <div class="stat-number" id="presentCount">0</div>
-        <div class="stat-label">Present</div>
-      </div>
-      <div class="stat-card absent">
-        <div class="stat-number" id="absentCount">0</div>
-        <div class="stat-label">Absent</div>
-      </div>
-      <div class="stat-card pending">
-        <div class="stat-number" id="pendingCount">17</div>
-        <div class="stat-label">Pending</div>
-      </div>
-    </div>
-
     <div class="table-container">
       <table id="attendanceTable">
         <thead>
@@ -180,19 +151,7 @@
     let attendance = {};
 
     const tableBody = document.getElementById("tableBody");
-    const presentCount = document.getElementById("presentCount");
-    const absentCount = document.getElementById("absentCount");
-    const pendingCount = document.getElementById("pendingCount");
     const downloadArea = document.getElementById("downloadArea");
-
-    function updateStats() {
-      const present = Object.values(attendance).filter(s => s === "Present").length;
-      const absent = Object.values(attendance).filter(s => s === "Absent").length;
-      const pending = towers.length - present - absent;
-      presentCount.textContent = present;
-      absentCount.textContent = absent;
-      pendingCount.textContent = pending;
-    }
 
     function buildTable() {
       tableBody.innerHTML = "";
@@ -223,7 +182,6 @@
             presentBtn.className = "status-btn active present";
             absentBtn.className = "status-btn";
           }
-          updateStats();
         };
 
         absentBtn.onclick = () => {
@@ -235,7 +193,6 @@
             absentBtn.className = "status-btn active absent";
             presentBtn.className = "status-btn";
           }
-          updateStats();
         };
 
         if (attendance[name] === "Present") {
@@ -296,7 +253,6 @@
     };
 
     buildTable();
-    updateStats();
   </script>
 </body>
 </html>
