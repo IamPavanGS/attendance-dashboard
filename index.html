@@ -133,7 +133,7 @@
     </div>
 
     <div class="actions">
-      <button class="action-btn save" id="saveBtn">📥 Save to Excel</button>
+      <button class="action-btn save" id="saveBtn"> Save to Excel</button>
       <div class="download-link" id="downloadArea"></div>
     </div>
   </div>
@@ -145,7 +145,7 @@
       "DL CN ALE MS Support", "DL IN ALE IAM Support", "DL IN ALE CSU EPS",
       "VTOM ADMIN", "Apps - CG ALE DWH", "DL IN IM BOXI ADMIN",
       "IS - CG ALE PKI", "Cloud COS RUN AWS FRNC", "COS Network",
-      "SFO - RDS", "Cloud Security"
+      "SFO - RDS", "Cloud Security", "GNOC"
     ];
 
     let attendance = {};
@@ -245,7 +245,7 @@
           link.href = url;
           const dateString = now.toISOString().split("T")[0];
           link.download = `attendance-${dateString}.xlsx`;
-          link.textContent = "⬇ Click here to download Excel";
+          link.textContent = "Click here to download Excel";
 
           downloadArea.appendChild(link);
         });
